@@ -310,9 +310,9 @@ This software is designed to provide health information for educational purposes
 - **Accuracy Reports**: Report potential medical inaccuracies
 
 ### Contact Information
-- **Project Maintainer**: [Your Name/Organization]
-- **Medical Advisory Board**: medical-advisory@project.org
-- **Security Issues**: security@project.org
+- **Project Maintainer**: Rumpa Giri
+- **Medical Advisory Board**: TBD
+- **Security Issues**: TBD
 
 ---
 
