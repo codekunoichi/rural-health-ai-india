@@ -10,15 +10,15 @@ class MalariaConstants:
         "severe vomiting", "repeated vomiting", "blood in vomit", "black vomit",
         "confusion", "delirium", "severe headache", "neck stiffness",
         "yellowing skin", "jaundice", "dark urine", "bloody urine",
-        "severe weakness", "collapse", "unable to sit", "unable to stand"
+        "severe weakness", "collapse", "unable to sit", "unable to stand",
+        "high fever", "fever above 104", "fever over 40"
     }
     
     # Severe symptoms requiring urgent medical care
     SEVERE_SYMPTOMS: Set[str] = {
-        "high fever", "persistent fever", "fever above 104", "fever over 40",
-        "severe chills", "rigors", "profuse sweating", "night sweats",
+        "persistent fever", "severe chills", "rigors", "profuse sweating", "night sweats",
         "severe muscle pain", "body aches", "joint pain",
-        "persistent headache", "severe headache", "nausea", "vomiting",
+        "persistent headache", "nausea", "vomiting",
         "diarrhea", "abdominal pain", "stomach pain"
     }
     

@@ -47,27 +47,51 @@ class TestMedlinePlusAPI:
         assert api_client.max_retries == 3
         assert api_client.timeout == 30
     
-    @patch('requests.get')
-    def test_search_malaria_success(self, mock_get, api_client, mock_malaria_response):
+    def test_search_malaria_success(self, api_client, mock_malaria_response):
         """Test successful malaria information retrieval."""
         # Red: Write failing test first
-        mock_get.return_value.status_code = 200
-        mock_get.return_value.json.return_value = mock_malaria_response
+        mock_response = Mock()
+        mock_response.status_code = 200
+        mock_response.text = """<?xml version="1.0" encoding="UTF-8"?>
+<nlmSearchResult>
+  <list>
+    <document>
+      <content>
+        <title>Malaria</title>
+        <summary>Malaria is a serious disease caused by parasites spread by mosquitoes.</summary>
+        <url>https://medlineplus.gov/malaria.html</url>
+        <date>2023-12-01</date>
+      </content>
+    </document>
+    <document>
+      <content>
+        <title>Malaria Symptoms</title>
+        <summary>Malaria symptoms include fever, chills, and headache.</summary>
+        <url>https://medlineplus.gov/malaria-symptoms.html</url>
+        <date>2023-11-15</date>
+      </content>
+    </document>
+  </list>
+  <count>2</count>
+</nlmSearchResult>"""
+        mock_response.raise_for_status.return_value = None
         
-        result = api_client.search_medical_topic("malaria")
+        # Mock the session.get method
+        with patch.object(api_client.session, 'get', return_value=mock_response) as mock_session_get:
+            result = api_client.search_medical_topic("malaria")
         
-        # Assertions for expected behavior
-        assert result is not None
-        assert len(result) == 2
-        assert result[0]["title"] == "Malaria"
-        assert "fever" in result[1]["summary"].lower()
-        
-        # Verify API was called correctly
-        mock_get.assert_called_once()
-        call_args = mock_get.call_args
-        assert "malaria" in call_args[1]["params"]["term"]
+            # Assertions for expected behavior
+            assert result is not None
+            assert len(result) == 2
+            assert result[0]["title"] == "Malaria"
+            assert "fever" in result[1]["summary"].lower()
+            
+            # Verify API was called correctly
+            mock_session_get.assert_called_once()
+            call_args = mock_session_get.call_args
+            assert "malaria" in call_args[1]["params"]["term"]
     
-    @patch('requests.get')
+    @patch('src.data_collection.medlineplus_api.requests.get')
     def test_search_with_network_error(self, mock_get, api_client):
         """Test handling of network errors with retry logic."""
         mock_get.side_effect = requests.exceptions.ConnectionError("Network error")
@@ -78,21 +102,29 @@ class TestMedlinePlusAPI:
         # Should retry 3 times
         assert mock_get.call_count == 3
     
-    @patch('requests.get')
+    @patch('src.data_collection.medlineplus_api.requests.get')
     def test_search_with_http_error(self, mock_get, api_client):
         """Test handling of HTTP errors (404, 500, etc.)."""
-        mock_get.return_value.status_code = 404
-        mock_get.return_value.raise_for_status.side_effect = requests.exceptions.HTTPError("404 Not Found")
+        mock_response = Mock()
+        mock_response.status_code = 404
+        mock_response.raise_for_status.side_effect = requests.exceptions.HTTPError("404 Not Found")
+        mock_get.return_value = mock_response
         
         with pytest.raises(requests.exceptions.HTTPError):
             api_client.search_medical_topic("invalid_topic")
     
-    @patch('requests.get')
+    @patch('src.data_collection.medlineplus_api.requests.get')
     def test_search_empty_results(self, mock_get, api_client):
         """Test handling of empty search results."""
-        empty_response = {"nlmSearchResult": {"list": {"document": []}, "count": 0}}
-        mock_get.return_value.status_code = 200
-        mock_get.return_value.json.return_value = empty_response
+        mock_response = Mock()
+        mock_response.status_code = 200
+        mock_response.text = """<?xml version="1.0" encoding="UTF-8"?>
+<nlmSearchResult>
+  <list></list>
+  <count>0</count>
+</nlmSearchResult>"""
+        mock_response.raise_for_status.return_value = None
+        mock_get.return_value = mock_response
         
         result = api_client.search_medical_topic("nonexistent_disease")
         
@@ -112,11 +144,27 @@ class TestMedlinePlusAPI:
         for term in invalid_terms:
             assert api_client._validate_search_term(term) == False
     
-    @patch('requests.get')
+    @patch('src.data_collection.medlineplus_api.requests.get')
     def test_search_malaria_specific_fields(self, mock_get, api_client, mock_malaria_response):
         """Test that malaria search returns required fields."""
-        mock_get.return_value.status_code = 200
-        mock_get.return_value.json.return_value = mock_malaria_response
+        mock_response = Mock()
+        mock_response.status_code = 200
+        mock_response.text = """<?xml version="1.0" encoding="UTF-8"?>
+<nlmSearchResult>
+  <list>
+    <document>
+      <content>
+        <title>Malaria</title>
+        <summary>Malaria is a serious disease caused by parasites spread by mosquitoes.</summary>
+        <url>https://medlineplus.gov/malaria.html</url>
+        <date>2023-12-01</date>
+      </content>
+    </document>
+  </list>
+  <count>1</count>
+</nlmSearchResult>"""
+        mock_response.raise_for_status.return_value = None
+        mock_get.return_value = mock_response
         
         result = api_client.search_medical_topic("malaria")
         
