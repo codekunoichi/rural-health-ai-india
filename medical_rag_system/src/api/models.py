@@ -12,6 +12,7 @@ class LanguageEnum(str, Enum):
     """Supported languages for medical queries."""
     ENGLISH = "english"
     HINDI = "hindi"
+    BENGALI = "bengali"
     AUTO = "auto"
 
 class MedicalQueryRequest(BaseModel):

@@ -23,19 +23,22 @@ class DataProcessor:
         self.severe_keywords = MalariaConstants.SEVERE_SYMPTOMS
         self.early_keywords = MalariaConstants.EARLY_SYMPTOMS
         self.hindi_symptoms = MalariaConstants.HINDI_SYMPTOMS
+        self.bengali_symptoms = MalariaConstants.BENGALI_SYMPTOMS
         
         # Compile regex patterns for efficiency
         self._compile_symptom_patterns()
     
     def _compile_symptom_patterns(self):
         """Compile regex patterns for symptom detection."""
-        # Create pattern for all symptoms (English and Hindi)
+        # Create pattern for all symptoms (English, Hindi, and Bengali)
         all_symptoms = (
             self.emergency_keywords | 
             self.severe_keywords | 
             self.early_keywords | 
             set(self.hindi_symptoms.keys()) |
-            set(self.hindi_symptoms.values())
+            set(self.hindi_symptoms.values()) |
+            set(self.bengali_symptoms.keys()) |
+            set(self.bengali_symptoms.values())
         )
         
         # Sort by length (longest first) to match longer phrases first
@@ -43,16 +46,30 @@ class DataProcessor:
         
         # Escape special regex characters and create pattern
         escaped_symptoms = [re.escape(symptom) for symptom in sorted_symptoms]
+        # Use flexible boundaries that work with Unicode characters
+        # Match symptoms even when they appear within larger phrases
         self.symptom_pattern = re.compile(
-            r'\b(' + '|'.join(escaped_symptoms) + r')\b', 
-            re.IGNORECASE
+            r'(' + '|'.join(escaped_symptoms) + r')', 
+            re.IGNORECASE | re.UNICODE
         )
         
-        # Pattern for emergency indicators
-        emergency_escaped = [re.escape(symptom) for symptom in sorted(self.emergency_keywords, key=len, reverse=True)]
+        # Pattern for emergency indicators (include Bengali and Hindi emergency terms)
+        emergency_terms = set(self.emergency_keywords)
+        
+        # Add Bengali emergency terms
+        for bengali_term, english_term in self.bengali_symptoms.items():
+            if english_term in self.emergency_keywords:
+                emergency_terms.add(bengali_term)
+        
+        # Add Hindi emergency terms  
+        for hindi_term, english_term in self.hindi_symptoms.items():
+            if english_term in self.emergency_keywords:
+                emergency_terms.add(hindi_term)
+        
+        emergency_escaped = [re.escape(symptom) for symptom in sorted(emergency_terms, key=len, reverse=True)]
         self.emergency_pattern = re.compile(
-            r'\b(' + '|'.join(emergency_escaped) + r')\b', 
-            re.IGNORECASE
+            r'(' + '|'.join(emergency_escaped) + r')', 
+            re.IGNORECASE | re.UNICODE
         )
     
     def clean_text(self, text: str) -> str:
@@ -74,9 +91,14 @@ class DataProcessor:
         # Remove leading/trailing whitespace
         text = text.strip()
         
+        # Clean excessive punctuation first
+        text = re.sub(r'[!]{2,}', '', text)  # Remove repeated !
+        text = re.sub(r'[?]{2,}', '', text)  # Remove repeated ?
+        text = re.sub(r'[.]{3,}', '...', text)  # Replace many dots with ellipsis
+        
         # Remove special characters but keep medical punctuation and Unicode letters
-        # Keep Hindi characters (Devanagari range: \u0900-\u097F) 
-        text = re.sub(r'[^\w\s\.\,\;\:\!\?\-\(\)\%\°\/\u0900-\u097F]', '', text)
+        # Keep Hindi characters (Devanagari range: \u0900-\u097F) and Bengali characters (Bengali range: \u0980-\u09FF)
+        text = re.sub(r'[^\w\s\.\,\;\:\!\?\-\(\)\%\°\/\u0900-\u097F\u0980-\u09FF]', '', text)
         
         # Normalize temperature mentions
         text = re.sub(r'(\d+)\s*degrees?\s*[Ff]ahrenheit', r'\1°F', text)
@@ -110,11 +132,13 @@ class DataProcessor:
         # Convert to lowercase and deduplicate
         symptoms = list(set(match.lower() for match in matches))
         
-        # Translate Hindi symptoms to English
+        # Translate Hindi and Bengali symptoms to English
         translated_symptoms = []
         for symptom in symptoms:
             if symptom in self.hindi_symptoms:
                 translated_symptoms.append(self.hindi_symptoms[symptom])
+            elif symptom in self.bengali_symptoms:
+                translated_symptoms.append(self.bengali_symptoms[symptom])
             else:
                 translated_symptoms.append(symptom)
         

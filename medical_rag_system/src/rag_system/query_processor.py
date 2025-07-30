@@ -329,12 +329,23 @@ class MedicalQueryProcessor:
         
         # Language detection
         hindi_chars = len(re.findall(r'[\u0900-\u097F]', query))
+        bengali_chars = len(re.findall(r'[\u0980-\u09FF]', query))
         total_chars = len(query.replace(' ', ''))
+        
         if total_chars > 0:
             hindi_ratio = hindi_chars / total_chars
-            if hindi_ratio > 0.3:
+            bengali_ratio = bengali_chars / total_chars
+            
+            # Check for mixed language content
+            if (hindi_ratio > 0.1 or bengali_ratio > 0.1) and (hindi_ratio + bengali_ratio) < 0.7:
+                # Has substantial non-Indic content alongside Indic characters
+                metadata['language'] = 'mixed'
+            elif bengali_ratio > 0.3:
+                metadata['language'] = 'bengali'
+            elif hindi_ratio > 0.3:
                 metadata['language'] = 'hindi'
-            elif hindi_ratio > 0.1:
+            elif (hindi_ratio + bengali_ratio) > 0.1:
+                # Predominantly Indic but below individual thresholds
                 metadata['language'] = 'mixed'
             else:
                 metadata['language'] = 'english'

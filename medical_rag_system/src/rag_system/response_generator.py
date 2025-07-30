@@ -190,7 +190,7 @@ class MedicalResponseGenerator:
     def add_medical_disclaimers(self, query_info: Dict[str, Any], 
                                response_type: str) -> List[str]:
         """
-        Add appropriate medical disclaimers based on context.
+        Add appropriate medical disclaimers based on context and language.
         
         Args:
             query_info: Query information
@@ -201,17 +201,29 @@ class MedicalResponseGenerator:
         """
         disclaimers = []
         
+        # Detect query language from metadata
+        query_language = query_info.get('metadata', {}).get('language', 'english')
+        
+        # Select appropriate disclaimer set based on language
+        if query_language == 'bengali':
+            disclaimer_set = self.malaria_constants.BENGALI_DISCLAIMERS
+        elif query_language == 'hindi':
+            disclaimer_set = self.malaria_constants.HINDI_DISCLAIMERS
+        else:
+            # Default to English for 'english', 'mixed', or undetected languages
+            disclaimer_set = self.malaria_constants.DISCLAIMERS
+        
         # Always include general disclaimer
-        disclaimers.append(self.malaria_constants.DISCLAIMERS['general'])
+        disclaimers.append(disclaimer_set['general'])
         
         # Emergency-specific disclaimer
         if response_type == 'emergency_alert':
-            disclaimers.append(self.malaria_constants.DISCLAIMERS['emergency'])
+            disclaimers.append(disclaimer_set['emergency'])
         
         # Pregnancy-specific disclaimer
         special_populations = query_info.get('metadata', {}).get('special_populations', [])
         if 'pregnancy' in special_populations:
-            disclaimers.append(self.malaria_constants.DISCLAIMERS['pregnancy'])
+            disclaimers.append(disclaimer_set['pregnancy'])
         
         return disclaimers
     
