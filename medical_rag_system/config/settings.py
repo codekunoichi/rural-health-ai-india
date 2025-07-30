@@ -41,6 +41,9 @@ class Settings:
     LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO")
     LOG_FORMAT = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
     
+    # API Configuration
+    DEBUG = os.getenv("DEBUG", "False").lower() == "true"
+    
     @classmethod
     def ensure_directories(cls):
         """Ensure all required directories exist."""

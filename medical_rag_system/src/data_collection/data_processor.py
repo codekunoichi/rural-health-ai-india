@@ -74,8 +74,9 @@ class DataProcessor:
         # Remove leading/trailing whitespace
         text = text.strip()
         
-        # Remove special characters but keep medical punctuation
-        text = re.sub(r'[^\w\s\.\,\;\:\!\?\-\(\)\%\°\/]', '', text)
+        # Remove special characters but keep medical punctuation and Unicode letters
+        # Keep Hindi characters (Devanagari range: \u0900-\u097F) 
+        text = re.sub(r'[^\w\s\.\,\;\:\!\?\-\(\)\%\°\/\u0900-\u097F]', '', text)
         
         # Normalize temperature mentions
         text = re.sub(r'(\d+)\s*degrees?\s*[Ff]ahrenheit', r'\1°F', text)

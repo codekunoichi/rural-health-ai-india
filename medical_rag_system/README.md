@@ -89,6 +89,80 @@ medical_rag_system/
 
 The system will be available at `http://localhost:5000`
 
+## 🌐 FastAPI REST API
+
+The system provides a modern REST API built with FastAPI for easy integration:
+
+### Starting the API Server
+
+```bash
+# Start the FastAPI server
+python3 run_api.py
+
+# The server will start at http://localhost:8000
+# Interactive documentation available at http://localhost:8000/docs
+```
+
+### API Endpoints
+
+#### Core Endpoints
+
+- **GET /** - API information and status
+- **GET /health** - Health check for monitoring
+- **GET /status** - Detailed system status
+
+#### Medical Query Processing
+
+- **POST /query** - Process medical queries with full RAG pipeline
+  ```json
+  {
+    "query": "I have fever and headache",
+    "language": "english", 
+    "include_sources": true,
+    "max_results": 5
+  }
+  ```
+
+- **POST /emergency-check** - Quick emergency detection
+  ```json
+  {
+    "query": "Patient unconscious with high fever"
+  }
+  ```
+
+- **GET /symptoms/extract** - Extract symptoms from text
+  ```
+  GET /symptoms/extract?query=I have fever and chills
+  ```
+
+### API Client Example
+
+```python
+import requests
+
+# Process a medical query
+response = requests.post("http://localhost:8000/query", json={
+    "query": "I have fever and headache for 2 days",
+    "language": "english",
+    "include_sources": True
+})
+
+result = response.json()
+print(f"Response: {result['response_text']}")
+print(f"Emergency: {result['emergency_alert']}")
+print(f"Symptoms: {result['symptoms']}")
+```
+
+### Testing the API
+
+```bash
+# Run the demo to test all models and endpoints
+python3 demo_api.py
+
+# Use the interactive client  
+python3 examples/api_client_example.py
+```
+
 ## 📋 Usage Examples
 
 ### Basic Symptom Check

@@ -26,7 +26,7 @@ class MalariaConstants:
     EARLY_SYMPTOMS: Set[str] = {
         "fever", "headache", "chills", "muscle aches", "tiredness",
         "fatigue", "weakness", "loss of appetite", "mild nausea",
-        "body pain", "joint aches", "feeling unwell", "malaise"
+        "body pain", "joint aches", "feeling unwell", "malaise", "sweating"
     }
     
     # Hindi symptom translations

@@ -463,6 +463,7 @@ class TestMedicalVectorStore:
             # Setup mocks
             mock_engine.embed_query.return_value = np.random.rand(384)
             mock_index.search.return_value = (np.array([[0.9, 0.8]]), np.array([[0, 1]]))
+            mock_index.ntotal = 2  # Set a real number instead of Mock
             vector_store.documents = sample_documents
             
             # Test symptom-specific search
@@ -492,10 +493,13 @@ class TestMedicalVectorStore:
         """Test saving and loading vector store to/from disk."""
         with patch('faiss.write_index') as mock_write, \
              patch('faiss.read_index') as mock_read, \
-             patch.object(vector_store, 'embeddings_engine') as mock_engine:
+             patch.object(vector_store, 'embeddings_engine') as mock_engine, \
+             patch('pathlib.Path.exists') as mock_exists:
             
             # Build and save index
             mock_engine.embed_texts.return_value = np.random.rand(len(sample_documents), 384)
+            mock_engine.get_embedding_dimension.return_value = 384
+            mock_engine.model_name = "mocked-model-name"  # Set a real string value
             vector_store.build_index(sample_documents)
             vector_store.save()
             
@@ -506,6 +510,7 @@ class TestMedicalVectorStore:
             metadata_file = temp_dir / "test_store_metadata.json"
             
             # Load index
+            mock_exists.return_value = True  # Mock that files exist
             mock_read.return_value = Mock()
             vector_store.load()
             
