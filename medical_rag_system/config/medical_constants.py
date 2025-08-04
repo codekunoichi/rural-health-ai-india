@@ -1,5 +1,158 @@
 from typing import Dict, List, Set
 
+class DengueConstants:
+    """Medical constants and definitions for dengue detection and triage."""
+    
+    # Emergency symptoms that require immediate medical attention
+    EMERGENCY_SYMPTOMS: Set[str] = {
+        "plasma leakage", "severe bleeding", "internal bleeding", "nosebleed persistent",
+        "gum bleeding", "vomiting blood", "blood in stool", "black stool",
+        "severe abdominal pain", "persistent vomiting", "difficulty breathing",
+        "restlessness", "lethargy", "confusion", "irritability",
+        "cold clammy skin", "weak pulse", "low blood pressure",
+        "seizure", "seizures", "unconscious", "unconsciousness"
+    }
+    
+    # Warning signs requiring urgent medical care
+    WARNING_SYMPTOMS: Set[str] = {
+        "abdominal pain", "persistent vomiting", "clinical fluid accumulation",
+        "mucosal bleeding", "increased vascular permeability", "thrombocytopenia",
+        "rapid breathing", "fatigue", "restlessness", "skin paleness"
+    }
+    
+    # Early/typical dengue symptoms
+    EARLY_SYMPTOMS: Set[str] = {
+        "high fever", "severe headache", "eye pain", "retro-orbital pain",
+        "muscle aches", "joint aches", "bone pain", "back pain",
+        "skin rash", "nausea", "vomiting", "loss of appetite",
+        "weakness", "fatigue", "body aches", "chills"
+    }
+    
+    # Bengali dengue symptom translations
+    BENGALI_DENGUE_SYMPTOMS: Dict[str, str] = {
+        # Basic dengue symptoms
+        "তীব্র জ্বর": "high fever",
+        "প্রচণ্ড জ্বর": "high fever", 
+        "গুরুতর মাথাব্যথা": "severe headache",
+        "প্রচণ্ড মাথাব্যথা": "severe headache",
+        "চোখের ব্যথা": "eye pain",
+        "চোখের পেছনে ব্যথা": "retro-orbital pain",
+        "পেশীর ব্যথা": "muscle aches",
+        "গা ব্যথা": "body aches",
+        "শরীর ব্যথা": "body aches",
+        "হাড়ের ব্যথা": "bone pain",
+        "জয়েন্টের ব্যথা": "joint aches",
+        "কোমরের ব্যথা": "back pain",
+        "র‍্যাশ": "skin rash",
+        "চামড়ায় দাগ": "skin rash",
+        "বমি": "vomiting",
+        "বমি বমি ভাব": "nausea",
+        "ক্ষুধামন্দা": "loss of appetite",
+        "দুর্বলতা": "weakness",
+        "ক্লান্তি": "fatigue",
+        "কাঁপুনি": "chills",
+        
+        # Warning signs
+        "পেটের ব্যথা": "abdominal pain",
+        "তীব্র পেট ব্যথা": "severe abdominal pain",
+        "ক্রমাগত বমি": "persistent vomiting",
+        "নাক দিয়ে রক্ত": "nosebleed",
+        "দাঁতের মাড়ি দিয়ে রক্ত": "gum bleeding",
+        "রক্তবমি": "vomiting blood",
+        "পায়খানায় রক্ত": "blood in stool",
+        "কালো পায়খানা": "black stool",
+        "শ্বাসকষ্ট": "difficulty breathing",
+        "দ্রুত শ্বাস": "rapid breathing",
+        "অস্থিরতা": "restlessness",
+        "ঝিমুনি": "lethargy",
+        "বিভ্রান্তি": "confusion",
+        "খিটখিটে ভাব": "irritability",
+        "ঠান্ডা ঘাম": "cold clammy skin",
+        "দুর্বল নাড়ি": "weak pulse",
+        "চামড়া ফ্যাকাশে": "skin paleness",
+        
+        # Emergency symptoms
+        "অজ্ঞান": "unconscious",
+        "অচেতন": "unconscious",
+        "খিঁচুনি": "seizures",
+        "রক্তক্ষরণ": "bleeding",
+        "অভ্যন্তরীণ রক্তক্ষরণ": "internal bleeding",
+        
+        # Common expressions
+        "ডেঙ্গুর লক্ষণ": "dengue symptoms",
+        "ডেঙ্গু জ্বর": "dengue fever",
+        "হাড় ভাঙা জ্বর": "bone-breaking fever",
+        "শরীর খারাপ": "feeling unwell",
+        "তবিয়ত খারাপ": "feeling sick"
+    }
+    
+    # Hindi dengue symptom translations  
+    HINDI_DENGUE_SYMPTOMS: Dict[str, str] = {
+        # Basic dengue symptoms
+        "तेज बुखार": "high fever",
+        "तीव्र बुखार": "high fever",
+        "गंभीर सिर दर्द": "severe headache",
+        "प्रचंड सिर दर्द": "severe headache", 
+        "आंखों में दर्द": "eye pain",
+        "आंखों के पीछे दर्द": "retro-orbital pain",
+        "मांसपेशियों में दर्द": "muscle aches",
+        "शरीर में दर्द": "body aches",
+        "हड्डी में दर्द": "bone pain",
+        "जोड़ों में दर्द": "joint aches",
+        "कमर दर्द": "back pain",
+        "रैश": "skin rash",
+        "चकत्ते": "skin rash",
+        "उल्टी": "vomiting",
+        "जी मिचलाना": "nausea",
+        "भूख न लगना": "loss of appetite",
+        "कमजोरी": "weakness",
+        "थकान": "fatigue",
+        "कंपकंपी": "chills",
+        
+        # Warning signs  
+        "पेट दर्द": "abdominal pain",
+        "तेज पेट दर्द": "severe abdominal pain",
+        "लगातार उल्टी": "persistent vomiting",
+        "नाक से खून": "nosebleed",
+        "मसूड़ों से खून": "gum bleeding",
+        "खून की उल्टी": "vomiting blood",
+        "मल में खून": "blood in stool",
+        "काला मल": "black stool",
+        "सांस लेने में तकलीफ": "difficulty breathing",
+        "तेज सांस": "rapid breathing",
+        "बेचैनी": "restlessness",
+        "सुस्ती": "lethargy",
+        "भ्रम": "confusion",
+        "चिड़चिड़ाहट": "irritability",
+        "ठंडा पसीना": "cold clammy skin",
+        "कमजोर नाड़ी": "weak pulse",
+        "पीली त्वचा": "skin paleness",
+        
+        # Emergency symptoms
+        "बेहोशी": "unconscious",
+        "दौरे": "seizures", 
+        "रक्तस्राव": "bleeding",
+        "आंतरिक रक्तस्राव": "internal bleeding",
+        
+        # Common expressions
+        "डेंगू के लक्षण": "dengue symptoms",
+        "डेंगू बुखार": "dengue fever",
+        "हड्डी तोड़ बुखार": "bone-breaking fever"
+    }
+    
+    # Dengue disclaimer templates
+    BENGALI_DENGUE_DISCLAIMERS = {
+        "general": "এই তথ্য শুধুমাত্র শিক্ষামূলক উদ্দেশ্যে এবং পেশাদার চিকিৎসা পরামর্শের বিকল্প নয়। ডেঙ্গু সন্দেহ হলে অবিলম্বে চিকিৎসকের পরামর্শ নিন।",
+        "warning": "⚠️ সতর্কতা: এই লক্ষণগুলি ডেঙ্গুর গুরুতর পর্যায়ের ইঙ্গিত দিতে পারে। অবিলম্বে নিকটস্থ হাসপাতালে যান।",
+        "emergency": "🚨 জরুরি অবস্থা: এই লক্ষণগুলি ডেঙ্গু হেমোরেজিক ফিভার বা ডেঙ্গু শক সিনড্রোমের ইঙ্গিত দিতে পারে। তাৎক্ষণিক চিকিৎসা সেবা প্রয়োজন।"
+    }
+    
+    HINDI_DENGUE_DISCLAIMERS = {
+        "general": "यह जानकारी केवल शैक्षिक उद्देश्यों के लिए है और पेशेवर चिकित्सा सलाह का विकल्प नहीं है। डेंगू का संदेह होने पर तुरंत डॉक्टर से सलाह लें।",
+        "warning": "⚠️ चेतावनी: ये लक्षण डेंगू की गंभीर अवस्था का संकेत हो सकते हैं। तुरंत नजदीकी अस्पताल जाएं।",
+        "emergency": "🚨 आपातकाल: ये लक्षण डेंगू हेमोरेजिक फीवर या डेंगू शॉक सिंड्रोम का संकेत हो सकते हैं। तत्काल चिकित्सा सहायता की आवश्यकता है।"
+    }
+
 class MalariaConstants:
     """Medical constants and definitions for malaria detection and triage."""
     

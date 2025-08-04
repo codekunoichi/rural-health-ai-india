@@ -165,3 +165,8 @@ Build this as a production-ready system that can be demonstrated to government o
 Focus on medical accuracy above all else - this system will be used for real health decisions in underserved communities.
 
 Provide complete, working code with detailed comments explaining the medical reasoning behind each component.
+
+## Claude Memories
+
+- Always remember to use python3 on this machine.
+- For python projects always start a virtual environment first before installing any libraries.
